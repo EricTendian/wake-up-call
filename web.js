@@ -57,8 +57,6 @@ var callPerson = function(phone) {
 
 app.all('/', function(request, response) {
 
-  console.log(request.body);
-
   if (request.body.hasOwnProperty("Body")) {
     var textMessage = request.body.Body; // like 23:15
     var locationOfSemicolon = textMessage.indexOf(":");
@@ -73,7 +71,7 @@ app.all('/', function(request, response) {
         callPerson(personPhone);
       });
       console.log("successful cron job creation");
-      response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>Good night, you will receive a wake-up call from us.</Sms></Response>");
+      response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>Good night, you will receive a wake-up call from us.</Message></Response>");
     } catch (ex) {
       console.log("cron job incorrectly formatted");
       response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>Sorry, we couldn't understand that. Try putting your time in the form of HH:MM like 23:15.</Message></Response>");
