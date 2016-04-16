@@ -84,7 +84,7 @@ app.all('/', function(request, response) {
     var answer = num1 + num2;
     answer = parseInt(answer);
     //using the gather TwiML to receive keypad input
-    response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Pause length=\"3\"/><Gather timeout=\"45\" finishOnKey=\"*\"><Say>Good Morning. What is " + num1 + " plus " + num2 + "?</Say></Gather></Response>");
+    response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Pause length=\"3\"/><Gather timeout=\"45\" finishOnKey=\"*\"><Say>Good Morning. What is " + num1 + " plus " + num2 + "? Type your answer then press star.</Say></Gather></Response>");
 
     answers[request.body.From] = answer;
     //checking if the answer was answered correctly, meaning the answer would be 0
