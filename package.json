@@ -1,14 +1,24 @@
 {
-  "name": "node-example",
-  "version": "0.0.1",
-  "dependencies": {
-    "express": "2.5.x",
-    "node-schedule": "0.1.x",
-    "sys": "x.x.x",
-    "qs": "x.x.x"
+  "name": "wake-up-call",
+  "version": "1.0.0",
+  "description": "Set up. Wake up. Get on with your day. A wake up caller built with Node.js, Twilio, and Heroku",
+  "main": "web.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "engines": {
-    "node": "0.8.x",
-    "npm": "1.1.x"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anwell/wake-up-call.git"
+  },
+  "author": "Anwell Wang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anwell/wake-up-call/issues"
+  },
+  "homepage": "https://github.com/anwell/wake-up-call#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "node-schedule": "^1.1.0",
+    "qs": "^6.1.0"
   }
 }
