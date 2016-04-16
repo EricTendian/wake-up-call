@@ -79,7 +79,7 @@ app.all('/', function(request, response) {
     }
   } else if (request.body.hasOwnProperty("CallSid") && !request.body.hasOwnProperty("Digits")) {
     //generating a random math problem
-    var num1 = Math.floor(Math.random() * 10);
+    var num1 = Math.floor(Math.random() * 10 + 10);
     var num2 = Math.floor(Math.random() * 10);
     var answer = num1 + num2;
     answer = parseInt(answer);
@@ -98,6 +98,9 @@ app.all('/', function(request, response) {
     //checking if the request was an input
     if (request.body.hasOwnProperty("Digits")) {
       var input = request.body.Digits;
+      if (input.length == 4) {
+        input = input.charAt(0) + input.charAt(2); // in case we get double DTMF codes (1 -> 11, 2 -> 22, etc)
+      }
       input = parseInt(input);
       if (input === parseInt(answers[request.body.From], 10)) {
         response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Say>That is correct. Good morning and goodbye.</Say></Response>");
