@@ -1,3 +1,4 @@
+// jshint node: true
 "use strict";
 var express = require('express');
 var schedule = require('node-schedule');
@@ -38,12 +39,12 @@ var callPerson = function(phone) {
         res.setEncoding('utf8');
         res.on('data', function(chunk){
             console.log('Response: ' + chunk);
-        })
-    })
+        });
+    });
 
     request.write(postdata);
     request.end();
-}
+};
 
 var app = express.createServer(express.logger());
 app.all('/', function(request, response) {
@@ -55,14 +56,14 @@ app.all('/', function(request, response) {
         var answer = num1 * num2;
         answer = parseInt(answer);
         //using the gather TwiML to receive keypad input
-        response.send("<Response><Gather timeout='30' finishOnKey='*'><Say>Good Morning. What is " + num1 + " times " + num2 + "</Say></Gather></Response>";);
+        response.send("<Response><Gather timeout='30' finishOnKey='*'><Say>Good Morning. What is " + num1 + " times " + num2 + "</Say></Gather></Response>");
 
         answers[request.body.From] = answer;
         //checking if the answer was answered correctly, meaning the answer would be 0
     } else if (request.body.hasOwnProperty("CallStatus") && (request.body.CallStatus == "completed" || request.body.CallStatus == "canceled" ) && answers[request.body.From] > 0){
         callPerson(request.body.From); //#TODO right now this does not work
     }
- 
+
     else {
         //checking if the request was an input
         if (request.body.hasOwnProperty("Digits")) {
@@ -76,18 +77,20 @@ app.all('/', function(request, response) {
                 response.send(wrong);
             }
         }
- 
+
         else {
             response.send("<Response><Say>We didn't receive any input. Goodbye!</Say></Response>");
         }
     }
+
+    var time;
 
     if (request.body.hasOwnProperty("Body")){
         var textMessage = request.body.Body;
 
         var locationOfSemicolon = textMessage.indexOf(":");
 
-        var time = textMessage.charAt(locationOfSemicolon + 1) + textMessage.charAt(locationOfSemicolon + 2) + " " + textMessage.charAt(locationOfSemicolon - 2)  + textMessage.charAt(locationOfSemicolon - 1);
+        time = textMessage.charAt(locationOfSemicolon + 1) + textMessage.charAt(locationOfSemicolon + 2) + " " + textMessage.charAt(locationOfSemicolon - 2)  + textMessage.charAt(locationOfSemicolon - 1);
 
         console.log(time);
     }
@@ -95,14 +98,14 @@ app.all('/', function(request, response) {
     try{
         var personPhone = request.body.From;
         var j = schedule.scheduleJob(time + " * * *", function(){
-            console.log("It's time.")
+            console.log("It's time.");
             // what to do when the alarm rings
             callPerson(personPhone);
 
-        })
-        console.log("successful cron job creation")
+        });
+        console.log("successful cron job creation");
     } catch(ex) {
-        console.log("cron job incorrectly formatted")
+        console.log("cron job incorrectly formatted");
         //#TODOsay how to format the text message
     }
 
