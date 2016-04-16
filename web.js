@@ -4,6 +4,8 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var schedule = require('node-schedule');
+var chrono = require('chrono-node');
+var moment = require('moment');
 var https = require('https');
 var qs = require('querystring');
 
@@ -59,20 +61,17 @@ app.all('/', function(request, response) {
 
   if (request.body.hasOwnProperty("Body")) {
     var textMessage = request.body.Body; // like 23:15
-    var locationOfSemicolon = textMessage.indexOf(":");
-    var time = textMessage.charAt(locationOfSemicolon + 1) + textMessage.charAt(locationOfSemicolon + 2) + " " + textMessage.charAt(locationOfSemicolon - 2) + textMessage.charAt(locationOfSemicolon - 1);
-    console.log(time);
-
-    try {
+    var time = chrono.parseDate(textMessage);
+    if (time) {
       var personPhone = request.body.From;
-      var j = schedule.scheduleJob(time + " * * *", function() {
-        console.log("It's time.");
+      var j = schedule.scheduleJob(time, function() {
+        console.log("It's time to call " + personPhone);
         // what to do when the alarm rings
         callPerson(personPhone);
       });
       console.log("successful cron job creation");
-      response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>Good night, you will receive a wake-up call from us.</Message></Response>");
-    } catch (ex) {
+      response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>Good night, you will receive a wake-up call from us "+moment(time).to(new Date())+"</Message></Response>");
+    } else {
       console.log("cron job incorrectly formatted");
       response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>Sorry, we couldn't understand that. Try putting your time in the form of HH:MM like 23:15.</Message></Response>");
       //#TODOsay how to format the text message
