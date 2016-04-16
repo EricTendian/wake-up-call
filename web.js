@@ -8,6 +8,11 @@ var https = require('https');
 var qs = require('querystring');
 
 var app = express();
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
 app.use(bodyParser.json());
 
 //The API and AUTH keys for Twilio are config variables in heroku
