@@ -52,15 +52,34 @@ var callPerson = function(phone) {
 
 app.all('/', function(request, response) {
 
-  if (request.body.hasOwnProperty("CallSid") && !request.body.hasOwnProperty("Digits")) {
+  if (request.body.hasOwnProperty("Body")) {
+    var textMessage = request.body.Body; // like 23:15
+    var locationOfSemicolon = textMessage.indexOf(":");
+    var time = textMessage.charAt(locationOfSemicolon + 1) + textMessage.charAt(locationOfSemicolon + 2) + " " + textMessage.charAt(locationOfSemicolon - 2) + textMessage.charAt(locationOfSemicolon - 1);
+    console.log(time);
+
+    try {
+      var personPhone = request.body.From;
+      var j = schedule.scheduleJob(time + " * * *", function() {
+        console.log("It's time.");
+        // what to do when the alarm rings
+        callPerson(personPhone);
+      });
+      console.log("successful cron job creation");
+      response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Sms from=\"+13126354487\" to=\""+request.body.From+"\">Good night, you will receive a wake-up call from us.</Sms></Response>");
+    } catch (ex) {
+      console.log("cron job incorrectly formatted");
+      response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Sms from=\"+13126354487\" to=\""+request.body.From+"\">Sorry, we couldn't understand that. Try putting your time in the form of HH:MM like 23:15.</Sms></Response>");
+      //#TODOsay how to format the text message
+    }
+  } else if (request.body.hasOwnProperty("CallSid") && !request.body.hasOwnProperty("Digits")) {
     //generating a random math problem
     var num1 = Math.floor(Math.random() * 8 + 3);
     var num2 = Math.floor(Math.random() * 39 + 11);
     var answer = num1 * num2;
     answer = parseInt(answer);
     //using the gather TwiML to receive keypad input
-    response.send(
-      "<Response><Gather timeout='30' finishOnKey='*'><Say>Good Morning. What is " + num1 + " times " + num2 + "</Say></Gather></Response>");
+    response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Gather timeout='30' finishOnKey='*'><Say>Good Morning. What is " + num1 + " times " + num2 + "</Say></Gather></Response>");
 
     answers[request.body.From] = answer;
     //checking if the answer was answered correctly, meaning the answer would be 0
@@ -76,37 +95,15 @@ app.all('/', function(request, response) {
       var input = request.body.Digits;
       input = parseInt(input);
       if (input === parseInt(answers[request.body.From], 10)) {
-        response.send("<Response><Say>That is correct. Good morning and goodbye.</Say></Response>");
+        response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Say>That is correct. Good morning and goodbye.</Say></Response>");
         answers[request.body.From] = 0; // 0 means the answer was inputted correctly
       } else {
-        var wrong = "<Response><Say>I'm sorry, that's wrong. This is what you entered." + input + "</Say></Response>";
+        var wrong = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Say>I'm sorry, that's wrong. This is what you entered." + input + "</Say></Response>";
         response.send(wrong);
       }
     } else {
-      response.send("<Response><Say>We didn't receive any input. Goodbye!</Say></Response>");
+      response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Say>We didn't receive any input. Goodbye!</Say></Response>");
     }
-  }
-
-  var time;
-
-  if (request.body.hasOwnProperty("Body")) {
-    var textMessage = request.body.Body; // like 23:15
-    var locationOfSemicolon = textMessage.indexOf(":");
-    time = textMessage.charAt(locationOfSemicolon + 1) + textMessage.charAt(locationOfSemicolon + 2) + " " + textMessage.charAt(locationOfSemicolon - 2) + textMessage.charAt(locationOfSemicolon - 1);
-    console.log(time);
-  }
-
-  try {
-    var personPhone = request.body.From;
-    var j = schedule.scheduleJob(time + " * * *", function() {
-      console.log("It's time.");
-      // what to do when the alarm rings
-      callPerson(personPhone);
-    });
-    console.log("successful cron job creation");
-  } catch (ex) {
-    console.log("cron job incorrectly formatted");
-    //#TODOsay how to format the text message
   }
 
   //response.send(200); //Send a reply saying OK
