@@ -84,7 +84,7 @@ app.all('/', function(request, response) {
     var answer = num1 + num2;
     answer = parseInt(answer);
     //using the gather TwiML to receive keypad input
-    response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Pause length=\"3\"/><Gather timeout=\"30\" finishOnKey=\"*\"><Say>Good Morning. What is " + num1 + " plus " + num2 + "?</Say></Gather></Response>");
+    response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Pause length=\"3\"/><Gather timeout=\"45\" finishOnKey=\"*\"><Say>Good Morning. What is " + num1 + " plus " + num2 + "?</Say></Gather></Response>");
 
     answers[request.body.From] = answer;
     //checking if the answer was answered correctly, meaning the answer would be 0
@@ -103,7 +103,7 @@ app.all('/', function(request, response) {
       }
       input = parseInt(input);
       if (input === parseInt(answers[request.body.From], 10)) {
-        response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Say>That is correct. Good morning and goodbye.</Say></Response>");
+        response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Say>That is correct. Have a great morning! Bye.</Say></Response>");
         answers[request.body.From] = 0; // 0 means the answer was inputted correctly
       } else {
         var wrong = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Say>I'm sorry, that's wrong. This is what you entered: " + input + "</Say></Response>";
