@@ -70,7 +70,7 @@ app.all('/', function(request, response) {
         callPerson(personPhone);
       });
       console.log("successful cron job creation");
-      response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>Good night, you will receive a wake-up call from us "+moment(time).to(new Date())+"</Message></Response>");
+      response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>Good night, you will receive a wake-up call from us "+moment(time).fromNow()+"</Message></Response>");
     } else {
       console.log("cron job incorrectly formatted");
       response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>Sorry, we couldn't understand that. Try putting your time in the form of HH:MM like 23:15.</Message></Response>");
