@@ -79,12 +79,12 @@ app.all('/', function(request, response) {
     }
   } else if (request.body.hasOwnProperty("CallSid") && !request.body.hasOwnProperty("Digits")) {
     //generating a random math problem
-    var num1 = Math.floor(Math.random() * 8 + 3);
-    var num2 = Math.floor(Math.random() * 39 + 11);
-    var answer = num1 * num2;
+    var num1 = Math.floor(Math.random() * 10);
+    var num2 = Math.floor(Math.random() * 10);
+    var answer = num1 + num2;
     answer = parseInt(answer);
     //using the gather TwiML to receive keypad input
-    response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Pause length=\"5\"/><Gather timeout=\"30\" finishOnKey=\"*\"><Say loop=\"2\">Good Morning. What is " + num1 + " times " + num2 + "</Say></Gather></Response>");
+    response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Pause length=\"3\"/><Gather timeout=\"30\" finishOnKey=\"*\"><Say>Good Morning. What is " + num1 + " plus " + num2 + "</Say></Gather></Response>");
 
     answers[request.body.From] = answer;
     //checking if the answer was answered correctly, meaning the answer would be 0
