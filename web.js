@@ -17,9 +17,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-//The API and AUTH keys for Twilio are config variables in heroku
 var api = process.env.TWILIO_SID;
 var auth = process.env.TWILIO_AUTH;
+var from_phone = process.env.FROM_PHONE_NUMBER;
 
 //an object literal with key value pairs of phone numbers and the right answer
 // #TODO remove key/values after the call has ended
@@ -29,7 +29,7 @@ var answers = {
 
 var callPerson = function(phone) {
   var postdata = qs.stringify({
-    'From': '+13126354487',
+    'From': from_phone,
     'To': phone,
     'Url': 'http://wake-up-call.herokuapp.com/'
   });
@@ -57,7 +57,11 @@ var callPerson = function(phone) {
   request.end();
 };
 
-app.all('/', function(request, response) {
+app.get('/', function(request, response) {
+  response.send('Send a text message to '+from_phone+' in the form of something like \"tomorrow at 7:00am\" and you will get a confirmation text, then a subsequent call. All times are currently in Central Time.');
+});
+
+app.post('/', function(request, response) {
 
   if (request.body.hasOwnProperty("Body")) {
     var textMessage = request.body.Body; // like 23:15
