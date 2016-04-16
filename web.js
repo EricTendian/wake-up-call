@@ -20,6 +20,7 @@ app.use(bodyParser.json());
 var api = process.env.TWILIO_SID;
 var auth = process.env.TWILIO_AUTH;
 var from_phone = process.env.FROM_PHONE_NUMBER;
+var public_site = process.env.PUBLIC;
 
 //an object literal with key value pairs of phone numbers and the right answer
 // #TODO remove key/values after the call has ended
@@ -49,7 +50,7 @@ var callPerson = function(phone) {
   var request = https.request(options, function(res) {
     res.setEncoding('utf8');
     res.on('data', function(chunk) {
-      console.log('Response: ' + chunk);
+      // console.log('Response: ' + chunk);
     });
   });
 
@@ -58,7 +59,11 @@ var callPerson = function(phone) {
 };
 
 app.get('/', function(request, response) {
-  response.send('Send a text message to '+from_phone+' in the form of something like \"tomorrow at 7:00am\" and you will get a confirmation text, then a subsequent call. All times are currently in Central Time.');
+  if (public_site) {
+    response.send('Send a text message to '+from_phone+' in the form of something like \"tomorrow at 7:00am\" and you will get a confirmation text, then a subsequent call. All times are currently in Central Time.');
+  } else {
+    response.sendStatus(403);
+  }
 });
 
 app.post('/', function(request, response) {
@@ -73,10 +78,8 @@ app.post('/', function(request, response) {
         // what to do when the alarm rings
         callPerson(personPhone);
       });
-      console.log("successful cron job creation");
       response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>Good night, you will receive a wake-up call from us "+moment(time).fromNow()+".</Message></Response>");
     } else {
-      console.log("cron job incorrectly formatted");
       response.send("<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>Sorry, we couldn't understand that. Try using a time like \"tomorrow at 7:00am\"</Message></Response>");
     }
   } else if (request.body.hasOwnProperty("CallSid") && !request.body.hasOwnProperty("Digits")) {
