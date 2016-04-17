@@ -32,7 +32,7 @@ var callPerson = function(phone) {
   var postdata = qs.stringify({
     'From': from_phone,
     'To': phone,
-    'Url': 'http://wake-up-call.herokuapp.com/'
+    'Url': 'http://wake-up-call.herokuapp.com/'+from_phone.replace('+','')
   });
 
   var options = {
